@@ -1,0 +1,21 @@
+{
+  "name": "standards-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "discord.js": "^14.18.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "eslint": "^9.24.0",
+    "prettier": "3.5.3"
+  }
+}
