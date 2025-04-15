@@ -5,13 +5,15 @@ const {
   StringSelectMenuBuilder,
   ComponentType,
   ActionRowBuilder,
+  PermissionFlagsBits,
 } = require("discord.js");
 const { getRaidplan } = require("../../lib/raid-helper/get-raidplan");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("fshycleanup")
-    .setDescription("Cleans up temporary channels created with fshybot"),
+    .setDescription("Cleans up temporary channels created with fshybot")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   async execute(interaction) {
     const roles = await interaction.guild.roles.fetch();
     const rolesToDelete = roles.filter((role) =>

@@ -6,6 +6,7 @@ const {
   createChannel,
   ChannelType,
   PermissionsBitField,
+  PermissionFlagsBits,
 } = require("discord.js");
 const { buildEventMenu } = require("./build-event-menu");
 const { getEvents } = require("../../lib/raid-helper/get-events");
@@ -18,7 +19,8 @@ module.exports = {
     .setName("fshyupdate")
     .setDescription(
       "Sets up a new role and channel based on a specific Raid Helper event",
-    ),
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   async execute(interaction) {
     const events = await getEvents();
     const selectMenu = buildEventMenu(events);
