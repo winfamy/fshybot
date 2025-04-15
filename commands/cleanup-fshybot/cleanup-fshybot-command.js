@@ -1,32 +1,63 @@
-const { SlashCommandBuilder, MessageFlags } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  MessageFlags,
+  StringSelectMenuOptionBuilder,
+  StringSelectMenuBuilder,
+  ComponentType,
+  ActionRowBuilder,
+} = require("discord.js");
+const { getRaidplan } = require("../../lib/raid-helper/get-raidplan");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("fshycleanup")
     .setDescription("Cleans up temporary channels created with fshybot"),
   async execute(interaction) {
-    const channels = await interaction.guild.channels.fetch();
-    const channelsToDelete = channels.filter((channel) =>
-      channel.name.startsWith("fshybot"),
-    );
-
-    console.log(channelsToDelete);
-    channelsToDelete.map((channel) => console.log(channel.name));
-    channelsToDelete.map((channel) =>
-      interaction.guild.channels.delete(channel.id),
-    );
-
     const roles = await interaction.guild.roles.fetch();
     const rolesToDelete = roles.filter((role) =>
-      role.name.startsWith("[fshybot] "),
+      role.name.endsWith("[fshybot]"),
     );
-    rolesToDelete.map((role) => console.log(role.name));
-    rolesToDelete.map((role) => interaction.guild.roles.delete(role.id));
+    let menuOptions = rolesToDelete.map((role) => {
+      // attributes come from the raidhelper api docs
+      return new StringSelectMenuOptionBuilder()
+        .setLabel(role.name)
+        .setValue(role.id);
+    });
 
+    const menu = new StringSelectMenuBuilder()
+      .setCustomId("cleanup-menu")
+      .setPlaceholder("Choose a role for cleanup")
+      .addOptions(menuOptions);
+    const row = new ActionRowBuilder().addComponents(menu);
     const response = await interaction.reply({
-      content: "cleaned up",
-      components: [],
+      content: "pick event!",
+      components: [row],
+      withResponse: true,
       flags: MessageFlags.Ephemeral,
+    });
+    const collector = response.resource.message.createMessageComponentCollector(
+      { componentType: ComponentType.StringSelect, time: 3_600_000 },
+    );
+
+    collector.on("collect", async (i) => {
+      const roleId = i.values[0];
+      const role = await interaction.guild.roles.fetch(roleId);
+      const eventName = role.name.replace(" [fshybot]", "");
+      const channelName =
+        eventName.toLowerCase().replaceAll(" ", "-") + "-fshybot";
+
+      const channels = await interaction.guild.channels.fetch();
+      const channelToDelete = channels.find(
+        (channel) => channel.name === channelName,
+      );
+      interaction.guild.channels.delete(channelToDelete.id);
+      interaction.guild.roles.delete(role.id);
+
+      await interaction.editReply({
+        content: "cleaned up",
+        components: [],
+        flags: MessageFlags.Ephemeral,
+      });
     });
   },
 };

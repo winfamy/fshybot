@@ -15,7 +15,7 @@ const { getEvent } = require("../../lib/raid-helper/get-event");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("fshycreate")
+    .setName("fshyupdate")
     .setDescription(
       "Sets up a new role and channel based on a specific Raid Helper event",
     ),
@@ -35,7 +35,6 @@ module.exports = {
 
     collector.on("collect", async (i) => {
       const selectedEventId = i.values[0];
-      console.log(selectedEventId);
       const raidPlan = await getRaidplan(selectedEventId);
       if (raidPlan === null) {
         return await interaction.editReply({
@@ -49,25 +48,17 @@ module.exports = {
       const newChannelName = event.title.toLowerCase().replaceAll(" ", "-");
 
       // create role
-      const role = await interaction.guild.roles.create({
-        name: event.title + " [fshybot]",
-      });
-
-      // give role permissions for channel
-      const channel = await interaction.guild.channels.create({
-        name: newChannelName + "-fshybot",
-        type: ChannelType.GuildText,
-        parent: DISCORD_STANDARDS_RAIDGROUPCATEGORYID,
-        permissionOverwrites: [
-          {
-            id: interaction.guild.id,
-            deny: [PermissionsBitField.Flags.ViewChannel],
-          },
-          { id: role.id, allow: [PermissionsBitField.Flags.ViewChannel] },
-        ],
-      });
+      const guildRoles = await interaction.guild.roles.fetch();
+      const role = guildRoles.find(
+        (role) => role.name === event.title + " [fshybot]",
+      );
 
       const raidPlanMembers = raidPlan.raidDrop.map((member) => member.userid);
+      const roleMembersToDelete = role.members.filter(
+        (member) => !raidPlanMembers.includes(member.id),
+      );
+      roleMembersToDelete.map((member) => member.roles.remove(role.id));
+
       const guildMembers = await interaction.guild.members.fetch({
         user: raidPlanMembers,
       });
@@ -77,7 +68,7 @@ module.exports = {
       });
 
       return await interaction.editReply({
-        content: "Created channel, added members to role",
+        content: "Updated role members",
         components: [],
         flags: MessageFlags.Ephemeral,
       });
