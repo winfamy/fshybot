@@ -8,11 +8,6 @@ const {
     PermissionsBitField,
     PermissionFlagsBits,
   } = require("discord.js");
-  const { buildEventMenu } = require("./build-event-menu");
-  const { getEvents } = require("../../lib/raid-helper/get-events");
-  const { getRaidplan } = require("../../lib/raid-helper/get-raidplan");
-  const { DISCORD_STANDARDS_RAIDGROUPCATEGORYID } = require("../../config.json");
-  const { getEvent } = require("../../lib/raid-helper/get-event");
   
   module.exports = {
     data: new SlashCommandBuilder()
