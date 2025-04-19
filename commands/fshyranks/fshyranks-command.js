@@ -23,7 +23,7 @@ const {
       .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     async execute(interaction) {
         if (interaction.options.getSubcommand() === "update") {
-            
+          //TODO 
         }
     },
   };
