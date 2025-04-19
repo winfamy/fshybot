@@ -48,5 +48,6 @@ for (const file of eventFiles) {
 client.login(DISCORD_TOKEN).then(async () => {
   let access_token = await generateAccessToken();
   console.log(access_token);
-  console.log(await pullGuildCharacterPage(access_token, 2013, 1, "dps"))
+  let sampleData = await pullGuildCharacterPage(access_token, 2013, 1, "dps")
+  console.log(JSON.stringify(sampleData))
 });
