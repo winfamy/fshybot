@@ -5,7 +5,7 @@ const { DISCORD_TOKEN } = require("./config.json");
 const { getEvents } = require("./lib/raid-helper/get-events");
 const { getEvent } = require("./lib/raid-helper/get-event");
 const { getRaidplan } = require("./lib/raid-helper/get-raidplan");
-const { generateAccessToken } = require("./lib/warcraftlogs/");
+const { generateAccessToken, pullGuildCharacterPage } = require("./lib/warcraftlogs/");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -46,6 +46,7 @@ for (const file of eventFiles) {
 }
 
 client.login(DISCORD_TOKEN).then(async () => {
-  // console.log(await getRaidplan("1361195193340264588"));
-  console.log(generateAccessToken());
+  let access_token = await generateAccessToken();
+  console.log(access_token);
+  console.log(await pullGuildCharacterPage(access_token, 2013, 1, "dps"))
 });
