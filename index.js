@@ -5,7 +5,13 @@ const { DISCORD_TOKEN } = require("./config.json");
 const { getEvents } = require("./lib/raid-helper/get-events");
 const { getEvent } = require("./lib/raid-helper/get-event");
 const { getRaidplan } = require("./lib/raid-helper/get-raidplan");
-const { generateAccessToken, pullGuildCharacterPage, transformCharacterData, pullAllMetricData } = require("./lib/warcraftlogs/");
+const {
+  generateAccessToken,
+  pullGuildCharacterPage,
+  transformCharacterData,
+  pullAllMetricData,
+} = require("./lib/warcraftlogs/");
+const logger = require("./lib/logger");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -23,7 +29,7 @@ for (const folder of commandFolders) {
     if ("data" in command && "execute" in command) {
       client.commands.set(command.data.name, command);
     } else {
-      console.log(
+      logger.error(
         `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
       );
     }

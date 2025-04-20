@@ -9,6 +9,7 @@ const {
   PermissionFlagsBits,
 } = require("discord.js");
 const { buildEmbed } = require("./build-embed");
+const { DISCORD_STANDARDS_RANKINGCHANNELID } = require("../../config.json");
 
 const sampleData = {
   feral: [
@@ -28,16 +29,15 @@ const sampleData = {
     { name: "fshi", rank: 2, spec: "marksmanship" },
     { name: "fshi", rank: 3, spec: "marksmanship" },
     { name: "fshi", rank: 4, spec: "melee" },
-  ]
-}
+  ],
+};
 
 module.exports = {
+  environment: "development",
   data: new SlashCommandBuilder()
     .setName("fshyranks")
-    .addSubcommand(subcommand =>
-      subcommand
-        .setName('update')
-        .setDescription('Update guild ranks')
+    .addSubcommand((subcommand) =>
+      subcommand.setName("update").setDescription("Update guild ranks"),
     )
     .setDescription(
       "Sets up a new role and channel based on a specific Raid Helper event",
@@ -45,9 +45,15 @@ module.exports = {
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   async execute(interaction) {
     if (interaction.options.getSubcommand() === "update") {
-      const embed = buildEmbed(sampleData)
-      interaction.reply({ embeds: [embed] })
+      let rankingChannel = interaction.guild.channels.fetch(
+        DISCORD_STANDARDS_RANKINGCHANNELID,
+      );
+
+      const embed = buildEmbed(sampleData);
+      await rankingChannel.threads.create({
+        name: "new ranking post",
+        message: { embeds: [embed] },
+      });
     }
   },
 };
-
