@@ -45,13 +45,23 @@ module.exports = {
       const roleId = i.values[0];
       const role = await interaction.guild.roles.fetch(roleId);
       const eventName = role.name.replace(" [fshybot]", "");
+      console.log(eventName);
       const channelName =
-        eventName.toLowerCase().replaceAll(" ", "-") + "-fshybot";
+        eventName.toLowerCase().replaceAll(/\W+/g, "-") + "-fshybot";
+      console.log(channelName);
 
       const channels = await interaction.guild.channels.fetch();
       const channelToDelete = channels.find(
         (channel) => channel.name === channelName,
       );
+
+      if (!channelToDelete) {
+        return await interaction.editReply({
+          content: "Failed to find channel name to delete.",
+          components: [],
+          flags: MessageFlags.Ephemeral,
+        });
+      }
       interaction.guild.channels.delete(channelToDelete.id);
       interaction.guild.roles.delete(role.id);
 
