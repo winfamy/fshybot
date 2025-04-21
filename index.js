@@ -9,9 +9,8 @@ const {
   generateAccessToken,
   pullGuildCharacterPage,
   transformCharacterData,
-  pullAllMetricData,
 } = require("./lib/warcraftlogs/");
-const logger = require("./lib/logger");
+const logger = require("./includes/logger");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 

@@ -1,6 +1,6 @@
 const { Events, MessageFlags } = require("discord.js");
 const { ENVIRONMENT } = require("../config.json");
-const logger = require("../lib/logger");
+const logger = require("../includes/logger");
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -21,6 +21,7 @@ module.exports = {
 
       await command.execute(interaction);
     } catch (error) {
+      console.log(error);
       logger.error(error);
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp({
