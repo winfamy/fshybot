@@ -43,16 +43,17 @@ const eventFiles = fs
 for (const file of eventFiles) {
   const filePath = path.join(eventsPath, file);
   const event = require(filePath);
-  if (event.once) {
-    client.once(event.name, (...args) => event.execute(...args));
-  } else {
-    client.on(event.name, (...args) => event.execute(...args));
+  try {
+    if (event.once) {
+      client.once(event.name, (...args) => event.execute(...args));
+    } else {
+      client.on(event.name, (...args) => event.execute(...args));
+    }
+  } catch (e) {
+    logger.error(e);
   }
 }
 
 client.login(DISCORD_TOKEN).then(async () => {
-  // let access_token = await generateAccessToken();
-  //  console.log(access_token);
-  // let sampleData = await pullGuildCharacterPage(access_token, 2013, 1, "dps")
-  //  console.log(JSON.stringify(await pullAllMetricData(access_token, 2018)))
+
 });

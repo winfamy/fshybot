@@ -42,20 +42,21 @@ const rest = new REST().setToken(DISCORD_TOKEN);
       `Started refreshing ${commands.length} application (/) commands.`,
     );
 
-    // The put method is used to fully refresh all commands in the guild with the current set
-    const data = await rest.put(
-      Routes.applicationGuildCommands(
-        DISCORD_APP_ID,
-        DISCORD_STANDARDS_SERVERID,
-      ),
-      { body: commands },
+    const guilds = await rest.get(Routes.userGuilds());
+    console.log(`Deploying to ${guilds.length} guilds...`);
+
+    await Promise.all(
+      guilds.map(async (guild) => {
+        const data = await rest.put(
+          Routes.applicationGuildCommands(DISCORD_APP_ID, guild.id),
+          { body: commands },
+        );
+        console.log(`Deployed ${data.length} commands to ${guild.name} (${guild.id})`);
+      }),
     );
 
-    console.log(
-      `Successfully reloaded ${data.length} application (/) commands.`,
-    );
+    console.log("Successfully deployed commands to all guilds.");
   } catch (error) {
-    // And of course, make sure you catch and log any errors!
     console.error(error);
   }
 })();
